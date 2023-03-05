@@ -1,0 +1,2 @@
+export const GET_ADMIN_DATA = "GET_ADMIN_DATA";
+export const EMPTY_ADMIN_DATA = "EMPTY_ADMIN_DATA";

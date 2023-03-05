@@ -1,0 +1,78 @@
+stages:
+    - deploy-stag
+    - deploy-1
+    - deploy-2
+    - deploy-3
+    - deploy-dev
+
+deploy-job1:
+    stage: deploy-1
+    tags:
+        - loobr-fe-1
+    script:
+        - pm2 stop loobr-fe-1
+        - npm i --legacy-peer-deps
+        - npm run build
+        - pm2 start loobr-fe-1
+
+    only:
+        - master
+
+deploy-job2:
+    stage: deploy-2
+    tags:
+        - loobr-fe-2
+    script:
+        - pm2 stop loobr-fe-2
+        - npm i --legacy-peer-deps
+        - npm run build
+        - pm2 start loobr-fe-2
+
+    only:
+        - master
+
+deploy-job3:
+    stage: deploy-3
+    tags:
+        - loobr-fe-03
+    script:
+        - pm2 stop loobr-fe-3
+        - npm i --legacy-peer-deps
+        - npm run build
+        - pm2 start loobr-fe-3
+
+    only:
+        - master
+
+deploy_stag_meta_frontend:
+    stage: deploy-stag
+    tags:
+        - loobr-dev
+    script:
+        # - pm2 stop stag-meta-fe
+        - pm2 stop custom-fe-cd
+        - cd /home/gitlab-runner/meta-ruffy-frontend
+        - export PORT=3000
+        - echo $PORT
+        - git stash
+        - git pull
+        - npm i --legacy-peer-deps
+        - npm run build:test
+        # - pm2 start stag-meta-fe
+        - pm2 start custom-fe-cd
+    only:
+        - staging
+
+deploy-loobr-dev-fe:
+    stage: deploy-dev
+    tags:
+        - loobr-dev-1
+    script:
+        - export PORT=3003
+        - echo $PORT
+        - npm i --legacy-peer-deps
+        - npm run build:develop
+        - pm2 start loobr-dev-1
+    # when: if_latest
+    only:
+        - develop
